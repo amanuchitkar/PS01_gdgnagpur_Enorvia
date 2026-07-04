@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-full p-4 md:p-8 max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+            <a href="/" class="w-10 h-10 bg-gradient-to-br from-primary-400 to-calm-500 rounded-xl flex items-center justify-center hover:scale-105 transition-transform">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Your Wellness Dashboard</h1>
+                <p class="text-sm text-gray-500">Emotional insights from your conversation</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="download-pdf-btn" onclick="downloadPDF()" class="hidden px-4 py-2 bg-calm-600 hover:bg-calm-700 text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Download PDF Report
+            </button>
+            <a href="/" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-xl transition-colors">
+                New Conversation
+            </a>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loading" class="flex items-center justify-center py-20">
+        <div class="text-center">
+            <div class="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-gray-500">Analyzing your conversation...</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div id="dashboard-content" class="hidden space-y-6">
+        <!-- Top Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-calm-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-calm-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-500 uppercase tracking-wide">Dominant Emotion</span>
+                </div>
+                <p id="stat-emotion" class="text-xl font-bold text-gray-800 capitalize">—</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-warm-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-warm-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-500 uppercase tracking-wide">Stress Level</span>
+                </div>
+                <p id="stat-stress" class="text-xl font-bold text-gray-800">—</p>
+                <div class="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div id="stat-stress-bar" class="h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-500 uppercase tracking-wide">Risk Level</span>
+                </div>
+                <p id="stat-risk" class="text-xl font-bold text-gray-800 capitalize">—</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    </div>
+                    <span class="text-xs text-gray-500 uppercase tracking-wide">Messages</span>
+                </div>
+                <p id="stat-messages" class="text-xl font-bold text-gray-800">—</p>
+            </div>
+        </div>
+
+        <!-- Summary & Concerns -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Conversation Summary</h3>
+                <p id="summary-text" class="text-sm text-gray-600 leading-relaxed">—</p>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Detected Concerns</h3>
+                <div id="concerns-list" class="flex flex-wrap gap-2">
+                    <span class="text-sm text-gray-400">No concerns detected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Emotional Timeline</h3>
+                <canvas id="stress-chart" height="200"></canvas>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Emotion Distribution</h3>
+                <canvas id="emotion-chart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Wellness Plan -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Your 7-Day Wellness Plan</h3>
+                    <p class="text-sm text-gray-500">Personalized recommendations based on your conversation</p>
+                </div>
+            </div>
+
+            <div id="plan-assessment" class="bg-primary-50 rounded-xl p-4 mb-6">
+                <p class="text-sm text-primary-800 leading-relaxed">—</p>
+            </div>
+
+            <div id="wellness-days" class="space-y-4"></div>
+
+            <!-- Recurring Habits -->
+            <div id="recurring-habits" class="mt-8">
+                <h4 class="text-md font-semibold text-gray-800 mb-3">Recurring Habits</h4>
+                <div id="habits-list" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Reminders -->
+            <div id="reminders-section" class="mt-6 bg-amber-50 rounded-xl p-4">
+                <h4 class="text-md font-semibold text-amber-800 mb-2">Important Reminders</h4>
+                <ul id="reminders-list" class="space-y-1"></ul>
+            </div>
+        </div>
+
+        <!-- Disclaimer footer -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <p class="text-xs text-amber-700 text-center">
+                <strong>Disclaimer:</strong> This application supports emotional wellness and is not a replacement for licensed mental health professionals. It does not diagnose mental illnesses or provide medical advice.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const CONVERSATION_ID = "{{ conversation_id }}";
+</script>
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

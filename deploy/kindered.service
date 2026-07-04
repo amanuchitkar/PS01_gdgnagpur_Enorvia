@@ -1,0 +1,20 @@
+[Unit]
+Description=Kindered - AI Mental Health Early Detection Agent
+After=network.target
+
+[Service]
+Type=simple
+User=Mentorsarthi
+Group=Mentorsarthi
+WorkingDirectory=/mnt/projects/gdgnagpur/PS01_gdgnagpur_Enorvia
+Environment=PATH=/mnt/projects/gdgnagpur/PS01_gdgnagpur_Enorvia/.venv/bin:/usr/bin:/bin
+EnvironmentFile=/mnt/projects/gdgnagpur/PS01_gdgnagpur_Enorvia/.env
+ExecStart=/mnt/projects/gdgnagpur/PS01_gdgnagpur_Enorvia/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8901 --workers 2 --access-log
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kindered
+
+[Install]
+WantedBy=multi-user.target
