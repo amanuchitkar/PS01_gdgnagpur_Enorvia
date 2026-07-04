@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-full flex flex-col">
+
+    <!-- ====== LANDING SECTION ====== -->
+    <section id="landing-section" class="flex-1 flex items-center justify-center px-4 py-12">
+        <div class="max-w-2xl w-full text-center space-y-8 fade-in">
+            <!-- Logo & Brand -->
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-400 to-calm-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Kindered</h1>
+            </div>
+
+            <!-- Hero -->
+            <div class="space-y-4">
+                <h2 class="text-2xl md:text-3xl font-semibold text-gray-700 leading-tight">Understand Your Emotional Wellbeing</h2>
+                <p class="text-gray-500 text-base md:text-lg max-w-lg mx-auto leading-relaxed">
+                    Kindered helps you reflect on your emotional wellbeing through a brief guided check-in, followed by a supportive AI companion conversation tailored to your needs.
+                </p>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-left max-w-lg mx-auto">
+                <div class="flex gap-3">
+                    <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm text-amber-700 leading-relaxed">
+                        <strong>Important:</strong> This tool is <strong>not a medical diagnosis</strong> and does not replace licensed mental health professionals. It is designed solely for personal self-reflection and emotional awareness.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <button
+                id="start-assessment-btn"
+                onclick="startAssessment()"
+                class="px-8 py-4 bg-gradient-to-r from-primary-500 to-calm-500 hover:from-primary-600 hover:to-calm-600 text-white text-lg font-semibold rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-primary-200"
+                aria-label="Start emotional wellness assessment"
+            >
+                Start Assessment
+            </button>
+
+            <p class="text-xs text-gray-400">Takes about 2–3 minutes • 10 questions • Completely private</p>
+        </div>
+    </section>
+
+    <!-- ====== ASSESSMENT SECTION ====== -->
+    <section id="assessment-section" class="hidden flex-1 flex items-center justify-center px-4 py-8">
+        <div class="max-w-xl w-full space-y-6">
+            <!-- Progress Bar -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <span id="question-counter" class="text-sm font-medium text-gray-600">Question 1 of 10</span>
+                    <span id="progress-percent" class="text-sm font-medium text-primary-600">10%</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-primary-400 to-calm-500 rounded-full transition-all duration-500 ease-out" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="question-card" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 transition-all duration-300">
+                <h3 id="question-text" class="text-lg md:text-xl font-semibold text-gray-800 mb-6 leading-relaxed"></h3>
+
+                <!-- Answer Options -->
+                <div id="options-container" class="space-y-3" role="radiogroup" aria-labelledby="question-text">
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center">
+                <button
+                    id="prev-btn"
+                    onclick="previousQuestion()"
+                    class="px-5 py-2.5 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                    disabled
+                    aria-label="Previous question"
+                >
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        Previous
+                    </span>
+                </button>
+                <button
+                    id="next-btn"
+                    onclick="nextQuestion()"
+                    class="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-calm-500 hover:from-primary-600 hover:to-calm-600 text-white text-sm font-medium rounded-xl shadow-sm hover:shadow-md transition-all focus:outline-none focus:ring-4 focus:ring-primary-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    disabled
+                    aria-label="Next question"
+                >
+                    <span class="flex items-center gap-2">
+                        Next
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== RESULTS SECTION ====== -->
+    <section id="results-section" class="hidden flex-1 flex items-center justify-center px-4 py-12">
+        <div class="max-w-2xl w-full space-y-8 fade-in">
+            <!-- Results Header -->
+            <div class="text-center space-y-3">
+                <div id="result-icon" class="w-20 h-20 mx-auto rounded-full flex items-center justify-center"></div>
+                <h2 id="result-category" class="text-2xl md:text-3xl font-bold text-gray-800"></h2>
+                <p id="result-score-label" class="text-sm text-gray-500"></p>
+            </div>
+
+            <!-- Score Visual -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="text-sm text-gray-500">Wellness Score</span>
+                    <div class="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div id="result-score-bar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                    </div>
+                    <span id="result-score-value" class="text-lg font-bold text-gray-800"></span>
+                </div>
+            </div>
+
+            <!-- Key Observations -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-gray-800">Key Observations</h3>
+                <ul id="observations-list" class="space-y-3"></ul>
+            </div>
+
+            <!-- Encouraging Message -->
+            <div id="encouraging-message" class="bg-primary-50 border border-primary-100 rounded-xl p-5 text-center">
+                <p class="text-sm text-primary-800 leading-relaxed"></p>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <div class="flex gap-3">
+                    <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm text-amber-700 leading-relaxed">
+                        <strong>Reminder:</strong> This assessment is for <strong>self-reflection only</strong>. It is not a clinical evaluation and should not be used to diagnose any condition. If you are experiencing distress, please reach out to a licensed mental health professional or call 988 (Suicide & Crisis Lifeline).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Continue Button -->
+            <div class="text-center space-y-3">
+                <button
+                    id="continue-btn"
+                    onclick="continueToCompanion()"
+                    class="px-8 py-4 bg-gradient-to-r from-primary-500 to-calm-500 hover:from-primary-600 hover:to-calm-600 text-white text-lg font-semibold rounded-2xl shadow-md hover:shadow-lg transition-all transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-primary-200"
+                    aria-label="Continue to AI companion conversation"
+                >
+                    Continue with AI Companion
+                </button>
+                <p class="text-xs text-gray-400">Your check-in results will personalize the conversation</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/checkin.js"></script>
+{% endblock %}

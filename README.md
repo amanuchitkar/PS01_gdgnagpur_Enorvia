@@ -1,139 +1,404 @@
-# Kindered – AI Mental Health Early Detection Agent
+# Kindered – AI-Powered Mental Health Early Detection Agent
 
-An AI-powered emotional wellness support application that detects stress, identifies emotional patterns, provides empathetic support, and generates personalized wellness recommendations.
+> **Helping people recognize emotional changes early through AI-powered conversations, personalized insights, and wellness recommendations.**
 
-**Live:** https://kindered.enorviaglobal.com
+**🌐 Live Demo:** https://kindered.enorviaglobal.com
 
-## Features
+---
 
-- **AI Conversation Agent**: Context-aware AI that remembers the conversation, asks intelligent follow-up questions, and detects emotional patterns
-- **Structured Analysis**: Every message analyzed for emotion, sentiment, stress score (0–100), confidence, risk level, and concerns
-- **Real-time Tracking**: Live stress and emotion indicators during conversation
-- **Wellness Dashboard**: Interactive charts (emotional timeline, emotion distribution), AI observations, and conversation insights
-- **7-Day Wellness Plan**: Personalized daily recommendations with specific habits and reasoning
-- **PDF Reports**: Downloadable professional report suitable for sharing with mental health professionals
-- **AWS Bedrock (Claude)**: Production AI integration for intelligent, empathetic responses
+# Overview
 
-## Important Disclaimer
+**Kindered** is an AI-powered emotional wellness platform designed to help individuals identify gradual emotional changes before they become more serious.
 
-This application supports emotional wellness and is **not a replacement for licensed mental health professionals**. It does not diagnose mental illnesses or provide medical advice.
+Unlike traditional chatbots, Kindered functions as an **AI Mental Health Early Detection Agent**. It listens, understands context, analyzes emotional patterns throughout a conversation, and provides supportive, personalized wellness guidance.
 
-## Tech Stack
+The goal is **early awareness**, **self-reflection**, and **timely intervention**—not diagnosis.
+
+---
+
+# Problem Statement
+
+Mental health challenges such as stress, anxiety, burnout, loneliness, and emotional exhaustion rarely appear overnight. They often develop gradually through everyday experiences, making them difficult for individuals to recognize until they begin affecting work, studies, relationships, or overall quality of life.
+
+Unfortunately, most mental health support systems are reactive. Many people seek professional help only after symptoms become severe. Others avoid discussing their emotions because of stigma, limited access to professionals, financial barriers, or simply because they do not realize their emotional wellbeing is declining.
+
+Existing AI chatbots generally provide conversational support but lack the ability to continuously understand emotional patterns, detect changes over time, and transform conversations into meaningful wellbeing insights.
+
+There is a growing need for an intelligent, accessible, and privacy-focused solution that encourages users to regularly reflect on their emotional wellbeing, recognize early warning signs, and seek appropriate support before emotional difficulties escalate.
+
+---
+
+# Our Solution
+
+Kindered addresses this challenge through an AI-powered emotional wellness companion built using **Python**, **FastAPI**, and **AWS Bedrock**.
+
+Rather than simply responding to messages, Kindered continuously analyzes conversations to understand how a user is feeling.
+
+The AI Agent can:
+
+- Understand emotional context
+- Detect stress and emotional patterns
+- Ask intelligent follow-up questions
+- Identify recurring concerns
+- Generate personalized wellness recommendations
+- Create structured emotional wellbeing reports
+- Encourage professional support when emotional risk increases
+
+Kindered **does not diagnose mental illnesses** or replace licensed mental health professionals.
+
+Instead, it helps users better understand themselves through regular emotional check-ins and AI-powered reflection.
+
+---
+
+# Key Features
+
+## 🤖 AI Emotional Conversation
+
+An intelligent AI companion that conducts natural, supportive conversations.
+
+The AI:
+
+- Maintains conversation context
+- Responds empathetically
+- Asks meaningful follow-up questions
+- Detects emotional changes during the conversation
+
+---
+
+## 📊 Emotional Analysis
+
+Every message is analyzed using AWS Bedrock.
+
+The AI identifies:
+
+- Primary emotion
+- Sentiment
+- Stress score (0–100)
+- Confidence score
+- Emotional concerns
+- Risk level
+
+---
+
+## 📈 Real-Time Emotional Tracking
+
+As conversations progress, Kindered continuously updates emotional indicators and stress levels, allowing users to observe changes throughout the session.
+
+---
+
+## 📉 Emotional Insights Dashboard
+
+After completing the conversation, Kindered generates a personalized dashboard containing:
+
+- Emotional timeline
+- Stress trend
+- Emotion distribution
+- AI observations
+- Conversation insights
+- Wellness summary
+
+---
+
+## 🌱 Personalized 7-Day Wellness Plan
+
+Based on the conversation, the AI creates a practical improvement plan including recommendations such as:
+
+- Better sleep habits
+- Mindfulness
+- Breathing exercises
+- Physical activity
+- Hydration
+- Digital wellbeing
+- Journaling
+- Social connection
+
+Every recommendation includes an explanation describing why it was suggested.
+
+---
+
+## 📄 Professional PDF Report
+
+Generate a downloadable report containing:
+
+- Conversation summary
+- Emotional assessment
+- Stress analysis
+- Wellness observations
+- Personalized recommendations
+- Seven-day wellness plan
+
+The report can be saved for personal reflection or shared with a licensed mental health professional if the user chooses.
+
+---
+
+# How Kindered Works
+
+```text
+User Conversation
+        │
+        ▼
+AWS Bedrock AI Agent
+        │
+        ▼
+Emotion Analysis
+        │
+        ▼
+Stress & Risk Detection
+        │
+        ▼
+Conversation Insights
+        │
+        ▼
+Wellness Dashboard
+        │
+        ▼
+7-Day Wellness Plan
+        │
+        ▼
+Professional PDF Report
+```
+
+---
+
+# Important Disclaimer
+
+> **Kindered is an emotional wellness support application.**
+
+Kindered is **not** a medical device and **does not diagnose** depression, anxiety disorders, or any other mental health condition.
+
+The application is **not a replacement for licensed psychologists, psychiatrists, therapists, counselors, or other healthcare professionals.**
+
+If you are experiencing significant emotional distress, thoughts of self-harm, or believe you are in crisis, please contact your local emergency services, crisis helpline, or a licensed mental health professional immediately.
+
+---
+
+# Technology Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Backend | Python 3.11, FastAPI, SQLAlchemy 2.0 (async) |
-| Frontend | Jinja2, Tailwind CSS, Chart.js, Vanilla JS |
+|--------|------------|
+| Backend | Python 3.11 |
+| Framework | FastAPI |
+| ORM | SQLAlchemy 2.0 (Async) |
+| Frontend | Jinja2 Templates |
+| UI | HTML5, Tailwind CSS, Vanilla JavaScript |
+| Charts | Chart.js |
 | Database | SQLite (PostgreSQL-ready via Alembic) |
 | AI | AWS Bedrock (Claude 3 Sonnet) |
 | PDF | ReportLab |
 | Deployment | Docker, Nginx, Let's Encrypt |
 
-## Quick Start
+---
 
-### Local Development
+# Project Architecture
+
+```text
+                 User
+                  │
+                  ▼
+        AI Conversation Page
+                  │
+                  ▼
+        FastAPI Backend API
+                  │
+                  ▼
+        AWS Bedrock (Claude)
+                  │
+        ┌─────────┼─────────┐
+        │         │         │
+        ▼         ▼         ▼
+ Emotion Analysis  Stress Analysis  Risk Detection
+        │
+        ▼
+ SQLite Database
+        │
+        ▼
+ Dashboard Generator
+        │
+        ├───────────────┐
+        ▼               ▼
+ Wellness Plan      PDF Report
+```
+
+---
+
+# Project Structure
+
+```text
+app/
+├── main.py
+├── config.py
+├── database.py
+├── models.py
+├── routers/
+│   ├── api.py
+│   └── pages.py
+├── repositories/
+├── services/
+│   ├── bedrock_service.py
+│   ├── conversation_service.py
+│   └── pdf_service.py
+├── templates/
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── images/
+└── reports/
+
+alembic/
+deploy/
+docs/
+Dockerfile
+docker-compose.yml
+requirements.txt
+README.md
+```
+
+---
+
+# API Endpoints
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/health` | Health check |
+| POST | `/api/conversation/start` | Start a new conversation |
+| POST | `/api/conversation/message` | Send a message and receive AI analysis |
+| POST | `/api/conversation/end` | End conversation and generate insights |
+| GET | `/api/dashboard/{id}` | Dashboard analytics |
+| GET | `/api/report/{id}/pdf` | Download PDF report |
+
+---
+
+# Local Development
+
+## Clone Repository
 
 ```bash
-# Create virtual environment
+git clone <repository-url>
+cd kindered
+```
+
+## Create Virtual Environment
+
+```bash
 python -m venv .venv
+```
+
+Linux/macOS
+
+```bash
 source .venv/bin/activate
+```
 
-# Install dependencies
+Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+---
+
+## Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-# Configure environment
+---
+
+## Configure Environment
+
+```bash
 cp .env.example .env
-# Edit .env with your AWS credentials
+```
 
-# Run database migrations
+Update the AWS Bedrock credentials inside `.env`.
+
+---
+
+## Run Database Migrations
+
+```bash
 alembic upgrade head
+```
 
-# Start the application
+---
+
+## Start Application
+
+```bash
 uvicorn app.main:app --reload --port 8000
 ```
 
-### Docker
+Open:
+
+```
+http://localhost:8000
+```
+
+---
+
+# Docker
 
 ```bash
 cp .env.example .env
-# Edit .env with your AWS credentials
+```
 
+Configure AWS credentials.
+
+Then run:
+
+```bash
 docker compose up --build
 ```
 
-Open http://localhost:8000 — the app opens directly to the conversation page.
+---
 
-## Project Structure
+# Migration to PostgreSQL
 
-```
-├── app/
-│   ├── main.py                 # FastAPI entry point
-│   ├── config.py               # Environment configuration
-│   ├── database.py             # Async SQLAlchemy setup
-│   ├── models.py               # 5 ORM models
-│   ├── routers/
-│   │   ├── api.py              # REST API + PDF endpoint
-│   │   └── pages.py            # HTML routes
-│   ├── services/
-│   │   ├── bedrock_service.py  # AWS Bedrock integration
-│   │   ├── conversation_service.py  # Business logic
-│   │   └── pdf_service.py      # PDF report generation
-│   ├── repositories/           # Data access layer (5 repos)
-│   ├── templates/              # Jinja2 HTML templates
-│   ├── static/js/              # Frontend JavaScript
-│   └── reports/                # Generated PDF files
-├── alembic/                    # Database migrations
-├── deploy/
-│   ├── nginx/                  # Nginx server block
-│   ├── deploy.sh               # Automated deployment
-│   └── rollback.sh             # Rollback script
-├── docs/
-│   ├── ARCHITECTURE.md         # System architecture
-│   ├── API.md                  # API documentation
-│   └── DEPLOYMENT.md           # Deployment guide
-├── docker-compose.yml
-├── Dockerfile
-└── requirements.txt
+Kindered currently uses SQLite for rapid development.
+
+The project has been designed using SQLAlchemy and Alembic, allowing seamless migration to PostgreSQL.
+
+Simply update:
+
+```env
+DATABASE_URL=postgresql+asyncpg://user:password@host:5432/kindered
 ```
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/health` | Health check |
-| POST | `/api/conversation/start` | Start new session |
-| POST | `/api/conversation/message` | Send message, get AI analysis |
-| POST | `/api/conversation/end` | End session, generate plan |
-| GET | `/api/dashboard/{id}` | Dashboard analytics data |
-| GET | `/api/report/{id}/pdf` | Download PDF report |
-
-## How It Works
-
-1. User opens the app → lands on the conversation page
-2. AI engages with empathetic questions and detects emotional patterns
-3. Each message is analyzed: emotion, stress, sentiment, risk, concerns
-4. Real-time emotion bar shows current state
-5. "End & View Insights" generates the wellness plan
-6. Dashboard shows charts, observations, and the 7-day plan
-7. PDF report can be downloaded for personal records or sharing with professionals
-
-## Database Migration to PostgreSQL
+Install:
 
 ```bash
-# 1. Install asyncpg
 pip install asyncpg
+```
 
-# 2. Update .env
-DATABASE_URL=postgresql+asyncpg://user:pass@host:5432/kindered
+Run:
 
-# 3. Run migrations
+```bash
 alembic upgrade head
 ```
 
-No code changes required.
+No application code changes are required.
 
-## Documentation
+---
 
-- [Architecture](docs/ARCHITECTURE.md) – System design and data flow
-- [API Reference](docs/API.md) – Endpoint documentation
-- [Deployment Guide](docs/DEPLOYMENT.md) – VPS deployment with isolation guarantees
+# Future Roadmap
+
+- Persistent AI memory across sessions
+- Voice conversations
+- Wearable integration
+- Therapist dashboard
+- Personalized CBT-inspired wellness exercises
+- Multi-language support
+- Mobile application
+- PostgreSQL + pgvector for semantic AI memory
+- Anonymous organizational wellness analytics
+
+---
+
+# Why Kindered?
+
+Kindered demonstrates how modern AI can move beyond simple conversation and become an intelligent emotional wellness companion.
+
+By combining conversational AI, emotional analysis, personalized recommendations, and actionable insights, Kindered empowers users to better understand their emotional wellbeing while encouraging early intervention and professional support when needed.
+
+The project is designed to be ethical, privacy-focused, scalable, and suitable for real-world emotional wellness applications.
