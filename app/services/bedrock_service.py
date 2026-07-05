@@ -96,7 +96,7 @@ class BedrockService:
         self.model_id = settings.BEDROCK_MODEL_ID
 
     async def analyze_message(
-        self, user_message: str, conversation_history: list[dict]
+        self, user_message: str, conversation_history: list[dict], checkin_context: str = ""
     ) -> dict:
         """Analyze a user message and return structured emotional analysis."""
         messages = []
@@ -106,6 +106,31 @@ class BedrockService:
             {"role": "user", "content": [{"type": "text", "text": user_message}]}
         )
 
+        # Bedrock/Anthropic API requires the first message to have "user" role.
+        # If the conversation started with an assistant greeting (e.g. from check-in),
+        # strip leading assistant messages so the array starts with a user message.
+        while messages and messages[0]["role"] != "user":
+            messages.pop(0)
+
+        # Anthropic API also requires strict user/assistant alternation.
+        # Merge consecutive same-role messages into one.
+        merged = []
+        for msg in messages:
+            if merged and merged[-1]["role"] == msg["role"]:
+                # Append text to the last message of the same role
+                existing_text = merged[-1]["content"][0]["text"]
+                new_text = msg["content"][0]["text"]
+                merged[-1]["content"][0]["text"] = existing_text + "\n" + new_text
+            else:
+                merged.append(msg)
+        messages = merged
+
+        # Build system prompt with optional check-in context
+        system_prompt = SYSTEM_PROMPT
+        if checkin_context:
+            system_prompt += f"\n\nIMPORTANT CONTEXT - EMOTIONAL CHECK-IN RESULTS:\n{checkin_context}\nUse this context to personalize your responses. Do NOT ask introductory questions the check-in already covered. Instead, gently explore the flagged concerns with empathy."
+        messages = merged
+
         try:
             response = self.client.invoke_model(
                 modelId=self.model_id,
@@ -113,7 +138,7 @@ class BedrockService:
                     {
                         "anthropic_version": "bedrock-2023-05-31",
                         "max_tokens": 1024,
-                        "system": SYSTEM_PROMPT,
+                        "system": system_prompt,
                         "messages": messages,
                     }
                 ),

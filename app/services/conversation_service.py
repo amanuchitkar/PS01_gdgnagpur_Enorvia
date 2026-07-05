@@ -32,6 +32,106 @@ class ConversationService:
         """Create a new conversation session."""
         return await self.conversation_repo.create(db)
 
+    async def create_conversation_with_checkin(
+        self,
+        db: AsyncSession,
+        score: int,
+        max_score: int,
+        category: str,
+        concerns: list[str],
+        emotional_summary: str,
+        area_scores: dict,
+    ) -> Conversation:
+        """Create a conversation pre-seeded with emotional check-in context.
+
+        Stores the check-in results as an initial system-level assistant message
+        so the AI has context about the user's emotional state without needing to
+        repeat introductory questions.
+        """
+        conversation = await self.conversation_repo.create(db)
+
+        # Build a context message that provides the AI with check-in results
+        context_content = (
+            f"[Assessment Context] The user completed an emotional wellness check-in "
+            f"before starting this conversation. Results: Score {score}/{max_score} "
+            f"(Category: {category})."
+        )
+        if concerns:
+            context_content += f" Areas of concern: {', '.join(concerns)}."
+        context_content += (
+            " Please acknowledge that they've already completed the check-in, "
+            "reference their results gently, and explore their flagged areas "
+            "with empathy. Do not ask generic introductory questions."
+        )
+
+        # Store as an assistant message so it becomes part of conversation history
+        # that the AI will see as context
+        checkin_greeting = self._build_checkin_greeting(category, concerns)
+        await self.message_repo.create(
+            db,
+            conversation_id=conversation.id,
+            role="assistant",
+            content=checkin_greeting,
+            emotional_summary=emotional_summary,
+            detected_concerns=concerns if concerns else None,
+        )
+
+        # Store an initial observation about the check-in
+        await self.observation_repo.create(
+            db,
+            conversation_id=conversation.id,
+            observation_type="insight",
+            content=f"Pre-conversation check-in completed. Category: {category}. "
+            f"Score: {score}/{max_score}. Concerns: {', '.join(concerns) if concerns else 'None flagged'}.",
+            severity="info" if category in ("Thriving", "Doing Well") else "warning",
+            related_emotions=concerns[:5] if concerns else None,
+        )
+
+        await db.commit()
+        return conversation
+
+    def _build_checkin_greeting(self, category: str, concerns: list[str]) -> str:
+        """Build a personalized greeting based on check-in results."""
+        if category == "Thriving":
+            greeting = (
+                "Thank you for taking the time to check in with yourself. "
+                "It sounds like you're in a strong place emotionally right now, "
+                "which is wonderful. I'm here if you'd like to explore anything "
+                "on your mind or simply reflect on what's going well."
+            )
+        elif category == "Doing Well":
+            greeting = (
+                "Thanks for completing the check-in. It looks like you're managing "
+                "well overall, though there may be a few areas worth exploring together. "
+                "I'm here to listen — what feels most present for you right now?"
+            )
+        elif category == "Needs Attention":
+            greeting = (
+                "Thank you for being honest in your check-in — that takes real courage. "
+                "I can see some areas where things have been harder lately"
+            )
+            if concerns:
+                greeting += f", particularly around {concerns[0]}"
+                if len(concerns) > 1:
+                    greeting += f" and {concerns[1]}"
+            greeting += (
+                ". I'm here to listen without judgment. "
+                "Would you like to start by sharing more about what's been weighing on you?"
+            )
+        else:  # High Emotional Strain
+            greeting = (
+                "I really appreciate you reaching out and being open in your check-in. "
+                "It sounds like things have been genuinely difficult recently"
+            )
+            if concerns:
+                greeting += f", especially around {concerns[0]}"
+            greeting += (
+                ". Please know you don't have to carry this alone. "
+                "I'm here to listen for as long as you need. "
+                "What would feel most helpful to talk about right now?"
+            )
+        return greeting
+
     async def get_conversation(self, db: AsyncSession, conversation_id: str) -> Optional[Conversation]:
         """Get a conversation with all messages."""
         return await self.conversation_repo.get_by_id(db, conversation_id)
@@ -50,8 +150,19 @@ class ConversationService:
             for msg in conversation.messages
         ]
 
+        # Extract check-in context if this conversation started from check-in.
+        # The first assistant message will have emotional_summary set from the check-in.
+        checkin_context = ""
+        if conversation.messages:
+            first_msg = conversation.messages[0]
+            if first_msg.role == "assistant" and first_msg.emotional_summary:
+                checkin_context = first_msg.emotional_summary
+                if first_msg.detected_concerns:
+                    concerns_str = ", ".join(first_msg.detected_concerns)
+                    checkin_context += f" Detected concerns: {concerns_str}."
+
         # Analyze with Bedrock
-        analysis = await bedrock_service.analyze_message(user_message, history)
+        analysis = await bedrock_service.analyze_message(user_message, history, checkin_context)
 
         # Store user message with analysis via repository
         await self.message_repo.create(

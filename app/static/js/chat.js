@@ -3,12 +3,39 @@ let messageCount = 0;
 
 async function initConversation() {
     try {
-        const response = await fetch('/api/conversation/start', { method: 'POST' });
-        const data = await response.json();
-        conversationId = data.conversation_id;
+        // Check if a conversation was already started from the check-in flow
+        if (typeof INITIAL_CONVERSATION_ID !== 'undefined' && INITIAL_CONVERSATION_ID) {
+            conversationId = INITIAL_CONVERSATION_ID;
+            // Load the existing greeting message from the check-in
+            await loadExistingMessages();
+        } else {
+            const response = await fetch('/api/conversation/start', { method: 'POST' });
+            const data = await response.json();
+            conversationId = data.conversation_id;
+        }
     } catch (error) {
         console.error('Failed to start conversation:', error);
         showError('Failed to connect. Please refresh the page.');
+    }
+}
+
+async function loadExistingMessages() {
+    try {
+        const response = await fetch(`/api/conversation/${conversationId}/messages`);
+        if (!response.ok) return;
+        const data = await response.json();
+
+        if (data.messages && data.messages.length > 0) {
+            // Replace the default welcome message with the check-in greeting
+            const container = document.getElementById('chat-container');
+            container.innerHTML = '';
+            data.messages.forEach(msg => {
+                addMessage(msg.role, msg.content);
+            });
+        }
+    } catch (e) {
+        // Silently fail — the default welcome message is fine as fallback
+        console.warn('Could not load existing messages:', e);
     }
 }
 

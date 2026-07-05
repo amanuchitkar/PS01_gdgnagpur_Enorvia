@@ -94,5 +94,8 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    const INITIAL_CONVERSATION_ID = "{{ conversation_id }}";
+</script>
 <script src="/static/js/chat.js"></script>
 {% endblock %}
